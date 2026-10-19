@@ -113,14 +113,14 @@ Additional scheduling tests will be added as the scheduling algorithms are imple
 
 ## 📐 Smarter Scheduling
 
-The advanced scheduling functionality will be implemented in the next phases.
+PawPal+ includes several scheduling algorithms that organize and manage pet care tasks.
 
-| Feature | Method(s) | Status / Notes |
-|---------|-----------|----------------|
-| Task sorting | `Scheduler.sort_by_time()` | To be implemented |
-| Filtering | `Scheduler.filter_tasks()` | To be implemented |
-| Conflict handling | `Scheduler.detect_conflicts()` | To be implemented |
-| Recurring tasks | `Scheduler.handle_recurring_task()` | To be implemented |
+| Feature | Method(s) | Notes |
+|---------|-----------|-------|
+| Task sorting | `Scheduler.sort_by_time()` | Sorts tasks chronologically using their `HH:MM` scheduled time |
+| Filtering | `Scheduler.filter_tasks()` | Filters tasks based on completion status |
+| Conflict handling | `Scheduler.detect_conflicts()` | Detects tasks that are scheduled at the exact same time and returns conflict pairs |
+| Recurring tasks | `Scheduler.handle_recurring_task()` | Creates the next occurrence one day later for daily tasks and seven days later for weekly tasks |
 
 ## 📸 Demo Walkthrough
 
