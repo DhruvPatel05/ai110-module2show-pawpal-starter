@@ -1,51 +1,68 @@
 # PawPal+ (Module 2 Project)
 
-You are building **PawPal+**, a Streamlit app that helps a pet owner plan care tasks for their pets.
+**PawPal+** is a Streamlit application that helps pet owners organize and manage daily care tasks for multiple pets.
 
 ## Scenario
 
-A busy pet owner needs help staying consistent with pet care. They want an assistant that can:
+A busy pet owner needs help staying consistent with pet care. PawPal+ helps the owner:
 
 - Track pet care tasks such as walks, feeding, medications, enrichment, grooming, and appointments
 - Manage multiple pets
 - Organize tasks by scheduled time
 - Track task completion and recurring activities
-- Produce a daily plan for pet care
-
-The system is designed using object-oriented programming with separate classes for owners, pets, tasks, and scheduling.
-
-## What You Will Build
-
-The final PawPal+ app will:
-
-- Let a user manage owner and pet information
-- Support multiple pets
-- Let a user create pet care tasks
-- Track task time, frequency, and completion status
-- Generate an organized daily schedule
-- Support sorting and filtering
 - Detect scheduling conflicts
-- Handle recurring tasks
-- Display the schedule through a Streamlit interface
-- Include automated tests for important behaviors
+- Produce an organized daily pet care schedule
+
+The system uses object-oriented programming with separate classes for owners, pets, tasks, and scheduling.
+
+## Features
+
+PawPal+ allows users to:
+
+- Add and manage an owner
+- Add multiple pets
+- Create care tasks for individual pets
+- Assign a scheduled time to each task
+- Choose task frequency: once, daily, or weekly
+- Track task completion status
+- View tasks from multiple pets
+- Sort tasks chronologically
+- Filter tasks by completion status
+- Detect tasks scheduled at the same time
+- Generate the next occurrence of daily and weekly tasks
+- Generate a daily schedule through a Streamlit interface
+- Display scheduling conflict warnings
 
 ## Getting Started
 
 ### Setup
 
+Create and activate a virtual environment:
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
+```
+
+Install the required dependencies:
+
+```bash
 pip install -r requirements.txt
 ```
 
-Run the command-line demonstration with:
+Run the command-line demonstration:
 
 ```bash
 python main.py
 ```
 
-Run the tests with:
+Run the Streamlit application:
+
+```bash
+streamlit run app.py
+```
+
+Run the automated tests:
 
 ```bash
 python -m pytest
@@ -53,18 +70,18 @@ python -m pytest
 
 ## Implementation Summary
 
-PawPal+ currently uses four main classes:
+PawPal+ uses four main classes:
 
-- **Task** represents an individual pet care activity. It stores the task description, scheduled time, frequency, and completion status.
+- **Task** represents an individual pet care activity. It stores the task description, scheduled time, frequency, completion status, and due date.
 - **Pet** stores information about an individual pet and manages the tasks assigned to that pet.
 - **Owner** manages multiple pets and provides access to tasks across all of the owner's pets.
-- **Scheduler** works through the Owner to retrieve and organize tasks across multiple pets.
+- **Scheduler** retrieves tasks through the Owner and provides sorting, filtering, conflict detection, and recurring-task functionality.
 
-The main backend logic is located in `pawpal_system.py`.
+The backend logic is implemented in `pawpal_system.py`.
 
-The `main.py` file provides a command-line demonstration that creates an owner, multiple pets, and several pet care tasks.
+The `main.py` file provides a command-line demonstration of the scheduling algorithms.
 
-The system currently supports adding pets, adding tasks, retrieving tasks across multiple pets, and marking tasks as completed.
+The `app.py` file provides the Streamlit user interface and stores the Owner object in `st.session_state` so pet and task information remains available while the application reruns.
 
 ## 🖥️ Sample Output
 
@@ -74,42 +91,61 @@ Running:
 python main.py
 ```
 
-currently produces:
+produces output similar to:
 
 ```text
-=== Today's Schedule ===
+=== Sorted Schedule ===
 08:00 | Morning Walk | daily | Pending
+08:00 | Feed Luna | daily | Pending
 09:00 | Feed Breakfast | daily | Pending
 10:30 | Give Medication | daily | Pending
+
+=== Pending Tasks ===
+09:00 | Feed Breakfast
+08:00 | Morning Walk
+10:30 | Give Medication
+08:00 | Feed Luna
+
+=== Conflicts ===
+WARNING: Morning Walk and Feed Luna are both scheduled at 08:00
+
+=== Recurring Task ===
+Current occurrence: 2026-10-18
+Next occurrence: 2026-10-19
 ```
 
-This demonstrates that the Scheduler can retrieve tasks belonging to multiple pets through the Owner.
+This demonstrates chronological sorting, filtering, conflict detection, and recurring-task behavior.
 
 ## 🧪 Testing PawPal+
 
-Run the current test suite with:
+Run the complete test suite with:
 
 ```bash
 python -m pytest
 ```
 
-Current test output:
+The automated tests verify:
+
+- Task completion
+- Adding tasks to pets
+- Chronological task sorting
+- Daily recurrence logic
+- Scheduling conflict detection
+
+Latest test result:
 
 ```text
 ============================= test session starts ==============================
-collected 2 items
+collected 5 items
 
-tests/test_pawpal.py ..                                             [100%]
+tests/test_pawpal.py .....                                            [100%]
 
-============================== 2 passed ===============================
+============================== 5 passed ===============================
 ```
 
-The current tests verify:
+**Confidence Level:** ⭐⭐⭐⭐⭐ (5/5)
 
-- **Task completion:** `Task.mark_complete()` correctly changes a task from incomplete to completed.
-- **Task addition:** `Pet.add_task()` correctly adds a task to a pet's task list.
-
-Additional scheduling tests will be added as the scheduling algorithms are implemented.
+All currently implemented core scheduling behaviors pass the automated tests.
 
 ## 📐 Smarter Scheduling
 
@@ -119,21 +155,55 @@ PawPal+ includes several scheduling algorithms that organize and manage pet care
 |---------|-----------|-------|
 | Task sorting | `Scheduler.sort_by_time()` | Sorts tasks chronologically using their `HH:MM` scheduled time |
 | Filtering | `Scheduler.filter_tasks()` | Filters tasks based on completion status |
-| Conflict handling | `Scheduler.detect_conflicts()` | Detects tasks that are scheduled at the exact same time and returns conflict pairs |
+| Conflict handling | `Scheduler.detect_conflicts()` | Detects tasks scheduled at the exact same time and returns conflict pairs |
 | Recurring tasks | `Scheduler.handle_recurring_task()` | Creates the next occurrence one day later for daily tasks and seven days later for weekly tasks |
+
+### Scheduling Tradeoff
+
+Conflict detection currently checks whether two tasks have the exact same scheduled time. It does not calculate overlapping task durations. This keeps the algorithm simple and understandable while still identifying obvious scheduling conflicts.
 
 ## 📸 Demo Walkthrough
 
-Current command-line workflow:
+1. Open the PawPal+ Streamlit application.
+2. Enter the owner's name and click **Save Owner**.
+3. Add one or more pets by entering a pet name and selecting its species.
+4. Select a pet and create a care task by entering its description, scheduled time, and frequency.
+5. View all added tasks in the **Current Tasks** table.
+6. Add additional tasks for the same or different pets.
+7. Click **Generate Schedule**.
+8. PawPal+ displays the tasks in chronological order.
+9. If two tasks are scheduled at the same time, the application displays a scheduling conflict warning.
+10. Daily and weekly recurring tasks can generate their next occurrence using the Scheduler.
 
-1. Create an `Owner`.
-2. Create multiple `Pet` objects and add them to the owner.
-3. Create pet care `Task` objects with different scheduled times.
-4. Assign the tasks to the appropriate pets.
-5. Create a `Scheduler` connected to the owner.
-6. Retrieve tasks across the owner's pets.
-7. Display the tasks as a daily schedule.
+### Example Workflow
 
-The next stage of the project will connect this backend logic to the Streamlit user interface.
+For example, an owner can add a dog named Buddy and create the following tasks:
 
-**Screenshot or video (optional):** A Streamlit demonstration can be added after the UI integration is complete.
+```text
+09:00 — Breakfast
+08:00 — Morning Walk
+08:00 — Medication
+```
+
+Even though Breakfast was added first, PawPal+ sorts the generated schedule chronologically:
+
+```text
+08:00 — Morning Walk
+08:00 — Medication
+09:00 — Breakfast
+```
+
+Because Morning Walk and Medication are both scheduled at `08:00`, PawPal+ also displays a conflict warning.
+
+## Project Structure
+
+```text
+pawpal_system.py       Core OOP classes and scheduling algorithms
+main.py                Command-line demonstration
+app.py                 Streamlit user interface
+tests/test_pawpal.py   Automated tests
+diagrams/uml.mmd       UML class diagram
+reflection.md          Project reflection
+ai_interactions.md     AI collaboration documentation
+requirements.txt       Python dependencies
+```
