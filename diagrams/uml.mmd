@@ -20,6 +20,7 @@ classDiagram
         +str time
         +str frequency
         +bool completed
+        +date due_date
         +mark_complete()
     }
 
@@ -27,11 +28,12 @@ classDiagram
         +Owner owner
         +get_all_tasks()
         +sort_by_time()
-        +filter_tasks()
+        +filter_tasks(completed)
         +detect_conflicts()
-        +handle_recurring_task()
+        +handle_recurring_task(task)
     }
 
     Owner "1" --> "*" Pet : owns
     Pet "1" --> "*" Task : has
     Scheduler --> Owner : retrieves tasks from
+    Scheduler ..> Task : organizes

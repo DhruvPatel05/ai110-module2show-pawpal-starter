@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-
+from datetime import date, timedelta
 
 @dataclass
 class Task:
@@ -9,10 +9,13 @@ class Task:
     time: str
     frequency: str = "once"
     completed: bool = False
+    due_date: date = field(default_factory=date.today)
 
     def mark_complete(self):
         """Mark this task as completed."""
         self.completed = True
+        
+    
 
 
 @dataclass
@@ -64,17 +67,53 @@ class Scheduler:
         return self.owner.get_all_tasks()
 
     def sort_by_time(self):
-        """Sort tasks by their scheduled time."""
-        pass
+        """Return all tasks sorted by scheduled time."""
+        return sorted(
+            self.get_all_tasks(),
+            key=lambda task: task.time
+        )
 
-    def filter_tasks(self):
-        """Filter tasks by pet or completion status."""
-        pass
+    def filter_tasks(self, completed=None):
+        """Filter tasks by completion status."""
+        tasks = self.get_all_tasks()
+
+        if completed is None:
+            return tasks
+
+        return [
+            task
+            for task in tasks
+            if task.completed == completed
+        ]
 
     def detect_conflicts(self):
-        """Detect tasks scheduled at the same time."""
-        pass
+        """Return pairs of tasks scheduled at the same time."""
+        tasks = self.get_all_tasks()
+        conflicts = []
 
-    def handle_recurring_task(self):
-        """Handle creation of recurring tasks."""
-        pass
+        for i in range(len(tasks)):
+            for j in range(i + 1, len(tasks)):
+                if tasks[i].time == tasks[j].time:
+                    conflicts.append((tasks[i], tasks[j]))
+
+        return conflicts
+
+    def handle_recurring_task(self, task):
+        """Create the next occurrence of a recurring task."""
+
+        if task.frequency == "daily":
+            next_date = task.due_date + timedelta(days=1)
+
+        elif task.frequency == "weekly":
+            next_date = task.due_date + timedelta(days=7)
+
+        else:
+            return None
+
+        return Task(
+            description=task.description,
+            time=task.time,
+            frequency=task.frequency,
+            completed=False,
+            due_date=next_date
+        )
